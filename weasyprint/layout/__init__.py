@@ -48,6 +48,7 @@ def layout_document(enable_hinting, style_for, get_image_from_uri, root_box):
     """
     context = LayoutContext(enable_hinting, style_for, get_image_from_uri)
     pages = list(make_all_pages(context, root_box))
+    rendered_pages = []
     page_counter = [1]
     counter_values = {'page': page_counter, 'pages': [len(pages)]}
     for i, page in enumerate(pages):
@@ -60,8 +61,11 @@ def layout_document(enable_hinting, style_for, get_image_from_uri, root_box):
         page.children = (root,) + tuple(
             make_margin_boxes(context, page, counter_values))
         layout_backgrounds(page, get_image_from_uri)
-        yield page
+        rendered_pages.append(page)
         page_counter[0] += 1
+    rendered_pages = rendered_pages.reverse()
+    for page in rendered_pages:
+        yield page
 
 
 class LayoutContext(object):
